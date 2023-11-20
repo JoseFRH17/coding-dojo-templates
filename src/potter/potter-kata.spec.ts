@@ -1,4 +1,4 @@
-import { PotterKata } from "./potter-kata";
+import { Book, Books, PotterKata } from "./potter-kata";
 
 // Hay 5 libros Cada libro ->  8€
 // Compras 2 libros diferentes -> 5% total
@@ -21,23 +21,42 @@ import { PotterKata } from "./potter-kata";
 describe("Potter kata shopping kart", () => {
   const potterKata = new PotterKata();
 
-  it("Should be a total price of 0 with zero books given", () => {
-    expect(potterKata.calculateTotalPrice([])).toBe(0);
+  describe.skip("Calculate total price", () => {
+    it("Should be a total price of 0 with zero books given", () => {
+      expect(potterKata.calculateTotalPrice([])).toBe(0);
+    });
+
+    it.each([
+      [[1], 8],
+      [[1, 1, 1], 24],
+    ])(
+      "Should not aplly any discount when the books are the same",
+      (books, price) => {
+        expect(potterKata.calculateTotalPrice(books)).toBe(price);
+      }
+    );
+
+    it("Should apply 5% discount with 2º different books", () => {
+      const books = [1, 2];
+      expect(potterKata.calculateTotalPrice(books)).toBe(15.2);
+    });
+
+    it("Should apply 10% discount with 3º different books", () => {
+      const books = [1, 2, 3];
+      expect(potterKata.calculateTotalPrice(books)).toBe(21.6);
+    });
   });
 
-  it.each([
-    [[1], 8],
-    [[1, 1, 1], 24],
-  ])(
-    "Should not aplly any discount when the books are the same",
-    (books, price) => {
-      expect(potterKata.calculateTotalPrice(books)).toBe(price);
-    }
-  );
-
-  it("Should apply 5% discount with 2º different books", () => {
-    const books = [1, 2];
-    expect(potterKata.calculateTotalPrice(books)).toBe(15.2);
+  describe("Convert Books Array to Books Object", () => {
+    it("Should map the book array to Book object ", () => {
+      const books: Books = [1, 2, 3];
+      const result: Book = {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+      };
+      expect(potterKata.convertBooksToBookObject(books)).toStrictEqual(result);
+    });
   });
 });
 

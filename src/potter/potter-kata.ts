@@ -9,6 +9,8 @@ export enum discounts {
 
 export type Books = number[];
 
+export type Book = { [key: string]: number };
+
 const EMPTY_CART = 0;
 
 export class PotterKata {
@@ -36,6 +38,12 @@ export class PotterKata {
     const booksSet = new Set(books);
 
     return booksSet.size === 1;
+  }
+
+  public convertBooksToBookObject(books: Books): Book {
+    const book: Book = {};
+    books.forEach((element) => (book[element] = (book[element] || 0) + 1));
+    return book;
   }
 
   //precio =>  longitud del array/subgrupo * 8 * (Descuento)
