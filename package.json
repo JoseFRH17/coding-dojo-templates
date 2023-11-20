@@ -20,7 +20,7 @@
     "build": "npm run lint && tsc --noEmit",
     "lint": "eslint . --ext .ts",
     "lint:fix": "npm run lint -- --fix",
-    "test": "vitest run --reporter=verbose",
+    "test": "vitest run --watch",
     "test:watch": "npm run test -- --watchAll",
     "test:coverage": "npm run test -- --coverage"
   },

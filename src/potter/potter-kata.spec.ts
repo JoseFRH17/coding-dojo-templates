@@ -1,4 +1,4 @@
-import { Book, Books, PotterKata } from "./potter-kata";
+import { BooksAmountByTitle, BooksOrder, PotterKata } from "./potter-kata";
 
 // Hay 5 libros Cada libro ->  8€
 // Compras 2 libros diferentes -> 5% total
@@ -21,7 +21,7 @@ import { Book, Books, PotterKata } from "./potter-kata";
 describe("Potter kata shopping kart", () => {
   const potterKata = new PotterKata();
 
-  describe.skip("Calculate total price", () => {
+  describe("Calculate total price", () => {
     it("Should be a total price of 0 with zero books given", () => {
       expect(potterKata.calculateTotalPrice([])).toBe(0);
     });
@@ -49,8 +49,8 @@ describe("Potter kata shopping kart", () => {
 
   describe("Convert Books Array to Books Object", () => {
     it("Should map the book array to Book object ", () => {
-      const books: Books = [1, 2, 3];
-      const result: Book = {
+      const books: BooksOrder = [1, 2, 3];
+      const result: BooksAmountByTitle = {
         "1": 1,
         "2": 1,
         "3": 1,
