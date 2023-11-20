@@ -35,9 +35,10 @@ describe("Potter kata shopping kart", () => {
     }
   );
 
-  // it("Should apply 5% discount with 2º different books", () => {
-
-  // })
+  it("Should apply 5% discount with 2º different books", () => {
+    const books = [1, 2];
+    expect(potterKata.calculateTotalPrice(books)).toBe(15.2);
+  });
 });
 
 // Test cases
