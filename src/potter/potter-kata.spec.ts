@@ -19,7 +19,11 @@ import { BooksAmountByTitle, BooksOrder, PotterKata } from "./potter-kata";
 // 51,60
 
 describe("Potter kata shopping kart", () => {
-  const potterKata = new PotterKata();
+  let potterKata: PotterKata;
+
+  beforeEach(async () => {
+    potterKata = new PotterKata();
+  });
 
   describe("Calculate total price", () => {
     it("Should be a total price of 0 with zero books given", () => {
@@ -36,16 +40,6 @@ describe("Potter kata shopping kart", () => {
       }
     );
 
-    // it("Should apply 5% discount with 2º different books", () => {
-    //   const books = [1, 2];
-    //   expect(potterKata.calculateTotalPrice(books)).toBe(15.2);
-    // });
-
-    // it("Should apply 10% discount with 3º different books", () => {
-    //   const books = [1, 2, 3];
-    //   expect(potterKata.calculateTotalPrice(books)).toBe(21.6);
-    // });
-
     it.each([
       [[1, 2], 15.2],
       [[1, 2, 3], 21.6],
@@ -57,6 +51,11 @@ describe("Potter kata shopping kart", () => {
         expect(potterKata.calculateTotalPrice(books)).toBe(price);
       }
     );
+
+    it("Should calculate total price with different book agroupations", () => {
+      const books = [1, 1, 2, 2, 3];
+      expect(potterKata.calculateTotalPrice(books)).toBe(36.8);
+    });
   });
 
   describe("Convert Books Array to Books Object", () => {
