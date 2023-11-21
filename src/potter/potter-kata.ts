@@ -1,5 +1,4 @@
 //https://codingdojo.org/kata/Potter/
-
 export const DISCOUNTS: Record<number, number> = {
   2: 1 - 0.05,
   3: 1 - 0.1,
@@ -8,41 +7,40 @@ export const DISCOUNTS: Record<number, number> = {
 };
 
 export type BooksOrder = number[];
-
 export type BooksAmountByTitle = Record<string, number>;
-
-const EMPTY_CART = 0;
 
 export class PotterKata {
   private bookPrice = 8;
   private totalPrice = 0;
-
-  private readonly SMALLEST_SUBGROUP_SIZE = 2;
+  private readonly MIN_SUBGROUP_SIZE = 2;
 
   constructor() {}
 
   calculateTotalPrice(books: BooksOrder): number {
-    if (books.length === EMPTY_CART) {
+    if (books.length === 0) {
       return this.totalPrice;
     }
 
-    const areBooksEqual = this.checkIfBooksAreEqual(books);
-    const booksLength = books.length;
-
-    if (areBooksEqual) {
-      return booksLength * this.bookPrice;
+    if (this.checkIfBooksAreEqual(books)) {
+      return books.length * this.bookPrice;
     }
 
+    return this.calculatePriceOfBookGroupings(books);
+  }
+
+  private calculatePriceOfBookGroupings(books: BooksOrder): number {
     const booksAmountByTitle: BooksAmountByTitle =
       this.convertBooksToBookObject(books);
     const subGroups =
       this.calculateSubGroupsFromBooksAmountByTitle(booksAmountByTitle);
 
-    console.log(subGroups);
-
     subGroups.forEach(
       (group) => (this.totalPrice += this.calculateSubGroupPrice(group))
     );
+
+    if (this.getSubGroupSize(booksAmountByTitle)) {
+      this.totalPrice += 8;
+    }
 
     return this.totalPrice;
   }
@@ -52,45 +50,60 @@ export class PotterKata {
   }
 
   private checkIfBooksAreEqual(books: BooksOrder): boolean {
-    const booksSet = new Set(books);
-
-    return booksSet.size === 1;
+    return new Set(books).size === 1;
   }
 
   public convertBooksToBookObject(books: BooksOrder): BooksAmountByTitle {
     const book: BooksAmountByTitle = {};
-    books.forEach((element) => (book[element] = (book[element] || 0) + 1));
+
+    for (const element of books) {
+      book[element] = (book[element] || 0) + 1;
+    }
+
     return book;
   }
 
   public calculateSubGroupsFromBooksAmountByTitle(
     booksAmount: BooksAmountByTitle
   ): number[] {
-    //Tipos de subgrupos Tamaño 5 4 3 2
     const result: number[] = [];
-    const keysSize = Object.keys(booksAmount).length;
 
-    while (this.getSubGroupSize(booksAmount) >= this.SMALLEST_SUBGROUP_SIZE) {
+    while (this.getSubGroupSize(booksAmount) >= this.MIN_SUBGROUP_SIZE) {
       const subGroupSize = this.getSubGroupSize(booksAmount);
       result.push(subGroupSize);
-      this.decreaseBookAmountEntries(subGroupSize, booksAmount);
+      this.decreaseBookAmountEntriesBySubgroupSize(subGroupSize, booksAmount);
     }
 
+    this.optimizeSubgroups(result);
+
     return result;
+  }
+
+  private optimizeSubgroups(subgroups: number[]): void {
+    const lastIndex = subgroups.length - 1;
+
+    if (subgroups[lastIndex - 1] === 5 && subgroups[lastIndex] === 3) {
+      subgroups[lastIndex - 1] = 4;
+      subgroups[lastIndex] = 4;
+    }
   }
 
   private getSubGroupSize(booksAmount: BooksAmountByTitle): number {
     return Object.values(booksAmount).filter((value) => value > 0).length;
   }
 
-  private decreaseBookAmountEntries(
+  private decreaseBookAmountEntriesBySubgroupSize(
     subGroupSize: number,
     booksAmount: BooksAmountByTitle
-  ) {
-    while (subGroupSize > 0) {
-      const bookValue = booksAmount[subGroupSize];
-      if (bookValue) booksAmount[subGroupSize] = bookValue - 1;
-      subGroupSize--;
+  ): void {
+    let startingIndex = 5;
+
+    while (subGroupSize > 0 && startingIndex > 0) {
+      if (booksAmount[startingIndex]) {
+        booksAmount[startingIndex]--;
+        subGroupSize--;
+      }
+      startingIndex--;
     }
   }
 }

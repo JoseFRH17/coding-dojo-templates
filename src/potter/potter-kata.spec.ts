@@ -53,8 +53,25 @@ describe("Potter kata shopping kart", () => {
     );
 
     it("Should calculate total price with different book agroupations", () => {
-      const books = [1, 1, 2, 2, 3];
+      const books = [1, 1, 2, 2, 3]; //[1,2,3][1,2] =>
       expect(potterKata.calculateTotalPrice(books)).toBe(36.8);
+    });
+
+    it("Should calculate total price with combination of agroupations and without", () => {
+      const books = [1, 1, 1, 2, 2, 3]; //[1,2,3][1,2][1]
+      expect(potterKata.calculateTotalPrice(books)).toBe(44.8);
+    });
+
+    it("Should calculate optimized total price with combination of agroupations and without", () => {
+      const books = [1, 1, 2, 2, 3, 3, 4, 5]; //[1,2,3,4] [1,2,3,5] <=> [1,2,3,4,5][1,2,3]
+      expect(potterKata.calculateTotalPrice(books)).toBe(51.2);
+    });
+
+    it("Should calculate optimized total price with combination of agroupations and without", () => {
+      const books = [
+        1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5, 5, 5, 5,
+      ];
+      expect(potterKata.calculateTotalPrice(books)).toBe(141.2);
     });
   });
 
