@@ -1,4 +1,5 @@
 //https://codingdojo.org/kata/Potter/
+
 export const DISCOUNTS: Record<number, number> = {
   2: 1 - 0.05,
   3: 1 - 0.1,
@@ -16,7 +17,7 @@ export class PotterKata {
 
   constructor() {}
 
-  calculateTotalPrice(books: BooksOrder): number {
+  public calculateTotalPrice(books: BooksOrder): number {
     if (books.length === 0) {
       return this.totalPrice;
     }
@@ -25,16 +26,27 @@ export class PotterKata {
       return books.length * this.bookPrice;
     }
 
-    return this.calculatePriceOfBookGroupings(books);
+    return this.calculatePrice(books);
   }
 
-  private calculatePriceOfBookGroupings(books: BooksOrder): number {
-    const booksAmountByTitle: BooksAmountByTitle =
-      this.convertBooksToBookObject(books);
-    const subGroups =
-      this.calculateSubGroupsFromBooksAmountByTitle(booksAmountByTitle);
+  public convertBooksToBooksAmountByTitle(
+    books: BooksOrder
+  ): BooksAmountByTitle {
+    const book: BooksAmountByTitle = {};
 
-    subGroups.forEach(
+    for (const element of books) {
+      book[element] = (book[element] || 0) + 1;
+    }
+
+    return book;
+  }
+
+  private calculatePrice(books: BooksOrder): number {
+    const booksAmountByTitle: BooksAmountByTitle =
+      this.convertBooksToBooksAmountByTitle(books);
+    const bookSubgroups = this.calculateSubGroupsFrom(booksAmountByTitle);
+
+    bookSubgroups.forEach(
       (group) => (this.totalPrice += this.calculateSubGroupPrice(group))
     );
 
@@ -53,19 +65,7 @@ export class PotterKata {
     return new Set(books).size === 1;
   }
 
-  public convertBooksToBookObject(books: BooksOrder): BooksAmountByTitle {
-    const book: BooksAmountByTitle = {};
-
-    for (const element of books) {
-      book[element] = (book[element] || 0) + 1;
-    }
-
-    return book;
-  }
-
-  public calculateSubGroupsFromBooksAmountByTitle(
-    booksAmount: BooksAmountByTitle
-  ): number[] {
+  private calculateSubGroupsFrom(booksAmount: BooksAmountByTitle): number[] {
     const result: number[] = [];
 
     while (this.getSubGroupSize(booksAmount) >= this.MIN_SUBGROUP_SIZE) {

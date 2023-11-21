@@ -83,7 +83,9 @@ describe("Potter kata shopping kart", () => {
         "2": 1,
         "3": 1,
       };
-      expect(potterKata.convertBooksToBookObject(books)).toStrictEqual(result);
+      expect(potterKata.convertBooksToBooksAmountByTitle(books)).toStrictEqual(
+        result
+      );
     });
   });
 });
