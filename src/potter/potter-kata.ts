@@ -1,14 +1,5 @@
 //https://codingdojo.org/kata/Potter/
 
-import { inflateRaw } from "zlib";
-
-export enum discounts {
-  TWO = 1 - 0.05,
-  THREE = 1 - 0.1,
-  FOUR = 1 - 0.2,
-  FIVE = 1 - 0.25,
-}
-
 export const DISCOUNTS: Record<number, number> = {
   2: 1 - 0.05,
   3: 1 - 0.1,
@@ -25,6 +16,8 @@ const EMPTY_CART = 0;
 export class PotterKata {
   private bookPrice = 8;
   private totalPrice = 0;
+
+  private readonly SMALLEST_SUBGROUP_SIZE = 2;
 
   constructor() {}
 
@@ -45,7 +38,13 @@ export class PotterKata {
     const subGroups =
       this.calculateSubGroupsFromBooksAmountByTitle(booksAmountByTitle);
 
-    return this.calculateSubGroupPrice(subGroups[0]);
+    console.log(subGroups);
+
+    subGroups.forEach(
+      (group) => (this.totalPrice += this.calculateSubGroupPrice(group))
+    );
+
+    return this.totalPrice;
   }
 
   private calculateSubGroupPrice(subGroup: number): number {
@@ -71,17 +70,17 @@ export class PotterKata {
     const result: number[] = [];
     const keysSize = Object.keys(booksAmount).length;
 
-    switch (keysSize) {
-      case 5:
-      case 4:
-      case 3:
-      case 2:
-        result.push(keysSize);
-        this.decreaseBookAmountEntries(5, booksAmount);
-        break;
+    while (this.getSubGroupSize(booksAmount) >= this.SMALLEST_SUBGROUP_SIZE) {
+      const subGroupSize = this.getSubGroupSize(booksAmount);
+      result.push(subGroupSize);
+      this.decreaseBookAmountEntries(subGroupSize, booksAmount);
     }
 
     return result;
+  }
+
+  private getSubGroupSize(booksAmount: BooksAmountByTitle): number {
+    return Object.values(booksAmount).filter((value) => value > 0).length;
   }
 
   private decreaseBookAmountEntries(
