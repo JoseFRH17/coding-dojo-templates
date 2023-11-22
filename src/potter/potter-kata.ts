@@ -22,35 +22,38 @@ export class PotterKata {
       return this.totalPrice;
     }
 
-    if (this.checkIfBooksAreEqual(books)) {
-      return books.length * this.bookPrice;
+    if (this.areAllBooksEqual(books)) {
+      return this.calculateEqualBooksPrice(books);
     }
 
-    return this.calculatePrice(books);
+    return this.calculatePriceForDifferentBooks(books);
   }
 
   public convertBooksToBooksAmountByTitle(
     books: BooksOrder
   ): BooksAmountByTitle {
-    const book: BooksAmountByTitle = {};
+    const booksAmountByTitle: BooksAmountByTitle = {};
 
-    for (const element of books) {
-      book[element] = (book[element] || 0) + 1;
+    for (const book of books) {
+      booksAmountByTitle[book] = (booksAmountByTitle[book] || 0) + 1;
     }
 
-    return book;
+    return booksAmountByTitle;
   }
 
-  private calculatePrice(books: BooksOrder): number {
-    const booksAmountByTitle: BooksAmountByTitle =
-      this.convertBooksToBooksAmountByTitle(books);
+  private calculateEqualBooksPrice(books: BooksOrder): number {
+    return books.length * this.bookPrice;
+  }
+
+  private calculatePriceForDifferentBooks(books: BooksOrder): number {
+    const booksAmountByTitle = this.convertBooksToBooksAmountByTitle(books);
     const bookSubgroups = this.calculateSubGroupsFrom(booksAmountByTitle);
 
     bookSubgroups.forEach(
       (group) => (this.totalPrice += this.calculateSubGroupPrice(group))
     );
 
-    if (this.getSubGroupSize(booksAmountByTitle)) {
+    if (this.hasRemainingBooks(booksAmountByTitle)) {
       this.totalPrice += 8;
     }
 
@@ -61,31 +64,38 @@ export class PotterKata {
     return subGroup * this.bookPrice * DISCOUNTS[subGroup];
   }
 
-  private checkIfBooksAreEqual(books: BooksOrder): boolean {
+  private areAllBooksEqual(books: BooksOrder): boolean {
     return new Set(books).size === 1;
   }
 
   private calculateSubGroupsFrom(booksAmount: BooksAmountByTitle): number[] {
-    const result: number[] = [];
+    const subgroups: number[] = [];
 
     while (this.getSubGroupSize(booksAmount) >= this.MIN_SUBGROUP_SIZE) {
       const subGroupSize = this.getSubGroupSize(booksAmount);
-      result.push(subGroupSize);
+      subgroups.push(subGroupSize);
       this.decreaseBookAmountEntriesBySubgroupSize(subGroupSize, booksAmount);
     }
 
-    this.optimizeSubgroups(result);
+    this.optimizeSubgroups(subgroups);
 
-    return result;
+    return subgroups;
   }
 
   private optimizeSubgroups(subgroups: number[]): void {
     const lastIndex = subgroups.length - 1;
 
-    if (subgroups[lastIndex - 1] === 5 && subgroups[lastIndex] === 3) {
+    if (this.shouldOptimizeSubgroups(subgroups, lastIndex)) {
       subgroups[lastIndex - 1] = 4;
       subgroups[lastIndex] = 4;
     }
+  }
+
+  private shouldOptimizeSubgroups(
+    subgroups: number[],
+    lastIndex: number
+  ): boolean {
+    return subgroups[lastIndex - 1] === 5 && subgroups[lastIndex] === 3;
   }
 
   private getSubGroupSize(booksAmount: BooksAmountByTitle): number {
@@ -105,5 +115,9 @@ export class PotterKata {
       }
       startingIndex--;
     }
+  }
+
+  private hasRemainingBooks(booksAmount: BooksAmountByTitle): boolean {
+    return this.getSubGroupSize(booksAmount) > 0;
   }
 }
