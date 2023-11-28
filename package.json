@@ -21,7 +21,7 @@
     "lint": "eslint . --ext .ts",
     "lint:fix": "npm run lint -- --fix",
     "test": "vitest run --reporter=verbose",
-    "test:watch": "npm run test -- --watchAll",
+    "test:watch": "vitest",
     "test:coverage": "npm run test -- --coverage"
   },
   "devDependencies": {
